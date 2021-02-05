@@ -1,13 +1,9 @@
 <?php
-include 'servicesController.php';
-include 'header.php';
-
-$services = Tourism::get_national_parks();
-?>
+include 'app_view.php'; include 'header.php';?>
 
 <main class="container-fluid">
-    <div class="row">
-        <div class="col-md-12 col-lg-12 col-xl-12">
+    <div class="row justify-content-center">
+        <div class="col-md-12 col-lg-8 col-xl-8">
             <div class="card mt-3">
                 <div class="card-header py-1">
                 <h5 class="font-weight-bold">Create package</h5>
@@ -15,9 +11,10 @@ $services = Tourism::get_national_parks();
                 <div class="card-body">
                     
 
-                        <form action="save_package.php" method="POST">
+                        <form action="" method="post" id="addPackageForm">
+                            <input type="hidden" name="action" value="add"/>
                             <label>Select tourism center</label>
-                            <select name="select_tourism_id" class="form-control">
+                            <select name="tourism_id" class="form-control">
                                 <?php
                                    foreach($services as $service){
                                      ?>
@@ -38,10 +35,16 @@ $services = Tourism::get_national_parks();
                             <label>Package Description</label>
                             <textarea name="description" required class="form-control"></textarea>
                             <hr>
-                            <button class="btn btn-info" type="submit">Save</button>
+                            <div class="row justify-content-between">
+                            <button class="btn btn-info" id="save-package-btn" type="submit">Save</button>
+                            <div class="before-3 d-none">
+                                <span class="spinner-border spinner-border-sm text-success"></span>saving...
+                            </div>
+                            <button type="reset" class="btn btn-danger">Clear</button>
+                            </div>
                         </form>
 
-                    	 
+                    	  
 
                     </div>
                 </div>
@@ -52,6 +55,4 @@ $services = Tourism::get_national_parks();
 
 
 
-<?php
-include 'footer.php';
-?>
+<?php include 'footer.php';?>
