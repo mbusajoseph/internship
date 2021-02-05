@@ -1,9 +1,4 @@
-<?php 
-include 'servicesController.php';
-include 'header.php';
-
-$services = Tourism::get_national_parks();
-?>
+<?php include 'app_view.php';include 'header.php'; ?>
 
 <main class="container-fluid">
     <div class="row">
@@ -52,6 +47,4 @@ $services = Tourism::get_national_parks();
 
 
 
-<?php
-include 'footer.php';
-?>
+<?php include 'footer.php'; ?>
