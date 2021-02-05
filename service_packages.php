@@ -1,10 +1,7 @@
 <?php 
-include 'servicesController.php';
+include 'app_view.php';
 include 'header.php';
-$service_id = $_GET['data'];
 
-$services = Tourism::get_packages($service_id);
-$result = Tourism::get_service($service_id);
 ?>
 
 <main class="container-fluid">
@@ -19,26 +16,20 @@ $result = Tourism::get_service($service_id);
 
                     	<table class="table table-striped">
                     		<thead>
-                    			<th>Name</th>  <th>Price</th> <th>Description</th>
+                    			<th>Name</th>  <th>Price</th> <th>Description</th> <th>Action</th>
                     		</thead>
 
                     		<tbody>
-                    			<?php 
-
-
-                    			foreach($services as $service){
-									 ?>
+                    			<?php foreach($services_by_id as $service):?>
 
 									<tr>
 									 	<td><?php echo $service['name'] ?></td>
                                         <td><?php echo number_format( $service['price'] ) ?></td>
                                         <td><?php echo $service['description'] ?></td>
+                                        <td> <a href="action-center.php?action=edit&package=<?= $service['id']?>" class="btn btn-success btn-sm">Edit <i class="fas fa-edit"></i></a></td>
 									</tr>
 
-									 <?php
-                                    }
-
-                    			?>
+									 <?php endforeach?>
                     		</tbody>
                     	</table>
 
@@ -49,6 +40,4 @@ $result = Tourism::get_service($service_id);
     </div>
 </main>
 
-<?php
-include 'footer.php';
-?>
+<?phpinclude 'footer.php';?>
