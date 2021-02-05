@@ -1,8 +1,4 @@
-<?php 
-include 'servicesController.php';
-include 'header.php';
-$orders = Tourism::get_orders();
-?>
+<?php include 'app_view.php';include 'header.php';?>
 
 <main class="container-fluid">
     <div class="row">
@@ -38,7 +34,33 @@ $orders = Tourism::get_orders();
                                         <td><?php echo number_format( $order['price'] )?></td>
                                         <td><?php echo $order['status'] ?></td>
                                         <td>
-                                            <a href=""></a>
+                
+                                            <div class="row justify-content-between">
+                                            <?php if ($order['status'] == 'pending' || $order['status'] == 'declined'): ?>
+                                            <form action="" method="get">
+                                                <input type="hidden" name="approve" value="true"/>
+                                                <input type="hidden" name="order" value="<?=$order['order_id']?>"/>
+                                                <button type="submit" class="btn btn-success btn-sm" onclick="return confAction('approve')">Approve</button>
+                                            </form>
+                                            <?php endif ?>
+
+                                            <?php if($order['status'] == 'pending' && $order['status'] !== 'declined'): ?>
+                                            <form action="" method="get">
+                                                <input type="hidden" name="decline" value="true"/>
+                                                <input type="hidden" name="order" value="<?=$order['order_id']?>"/>
+                                                <button type="submit" class="btn btn-warning btn-sm" onclick="return confAction('decline')">Decline</button>
+                                            </form>
+                                            <?php endif ?>
+                                            </div>
+                                            
+                                            <?php if ($order['status'] == 'approved'): ?>
+                                            <!-- Disapprove -->
+                                            <form action="" method="get">
+                                                <input type="hidden" name="cancel" value="true"/>
+                                                <input type="hidden" name="order" value="<?=$order['order_id']?>"/>
+                                                <button type="submit" class="btn btn-success btn-sm" onclick="return confAction('cancel')">Cancel Approval</button>
+                                            </form>
+                                            <?php endif ?>
                                         </td>
                                     </tr>
 
@@ -54,6 +76,9 @@ $orders = Tourism::get_orders();
                 </div>
             </div>
         </div>
+    </div>
+    <div class="fixed-bottom w-5" id="response">
+        <?= $response ?>
     </div>
 </main>
 
