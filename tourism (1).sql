@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.1
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Feb 05, 2021 at 09:04 AM
--- Server version: 10.4.11-MariaDB
--- PHP Version: 7.4.2
+-- Host: 127.0.0.1:3306
+-- Generation Time: Feb 05, 2021 at 10:52 AM
+-- Server version: 10.4.10-MariaDB
+-- PHP Version: 7.4.0
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `tourism`
+-- Database: `simpletech_tourism`
 --
 
 -- --------------------------------------------------------
@@ -28,9 +28,11 @@ SET time_zone = "+00:00";
 -- Table structure for table `admin`
 --
 
-CREATE TABLE `admin` (
+DROP TABLE IF EXISTS `admin`;
+CREATE TABLE IF NOT EXISTS `admin` (
   `username` varchar(20) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`username`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
@@ -46,21 +48,22 @@ INSERT INTO `admin` (`username`, `password`) VALUES
 -- Table structure for table `national_parks`
 --
 
-CREATE TABLE `national_parks` (
-  `id` int(10) NOT NULL,
+DROP TABLE IF EXISTS `national_parks`;
+CREATE TABLE IF NOT EXISTS `national_parks` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
   `location` varchar(50) NOT NULL,
-  `description` text DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `description` text DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `national_parks`
 --
 
 INSERT INTO `national_parks` (`id`, `name`, `location`, `description`) VALUES
-(1, 'Queen Elizabeth', 'Kasese', NULL),
-(2, 'Bwindi National Park', '', NULL),
-(3, 'Machizon N.P', 'Kasese', NULL);
+(1, 'Machizon N.P', 'Kasese', NULL),
+(2, 'Queen Elizabeth', 'Kasese', NULL);
 
 -- --------------------------------------------------------
 
@@ -68,24 +71,27 @@ INSERT INTO `national_parks` (`id`, `name`, `location`, `description`) VALUES
 -- Table structure for table `packages`
 --
 
-CREATE TABLE `packages` (
-  `id` int(10) NOT NULL,
+DROP TABLE IF EXISTS `packages`;
+CREATE TABLE IF NOT EXISTS `packages` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `price` varchar(10) NOT NULL,
   `name` varchar(50) NOT NULL,
-  `national_park_id` int(10) NOT NULL,
-  `description` text NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `description` varchar(255) DEFAULT NULL,
+  `national_park_id` int(10) DEFAULT NULL,
+  `status` enum('0','1') DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `national_park_id` (`national_park_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `packages`
 --
 
-INSERT INTO `packages` (`id`, `price`, `name`, `national_park_id`, `description`) VALUES
-(1, '100000', 'Golden', 1, 'With this package, you will have 5 days of safaris, and feeding'),
-(2, '75000', 'Silver', 1, 'With this package, you will have 3 days of safaris, and feeding. 0755205108 will call you shortly'),
-(49, '100000', 'Golden', 1, ''),
-(50, '75000', 'Silver', 1, ''),
-(51, '600000', 'Silver', 3, 'hjfkhddf');
+INSERT INTO `packages` (`id`, `price`, `name`, `description`, `national_park_id`, `status`) VALUES
+(1, '100000', 'Golden', NULL, 1, '0'),
+(2, '75000', 'Silver', 'The smallest package', 1, '0'),
+(3, '15000', 'Diamond', NULL, NULL, '0');
 
 -- --------------------------------------------------------
 
@@ -93,88 +99,25 @@ INSERT INTO `packages` (`id`, `price`, `name`, `national_park_id`, `description`
 -- Table structure for table `park_orders`
 --
 
-CREATE TABLE `park_orders` (
-  `id` int(10) NOT NULL,
+DROP TABLE IF EXISTS `park_orders`;
+CREATE TABLE IF NOT EXISTS `park_orders` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
   `package_id` int(10) NOT NULL,
   `status` varchar(10) NOT NULL DEFAULT 'pending',
   `phone_number` varchar(15) NOT NULL,
-  `date_ordered` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `date_ordered` datetime NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`),
+  KEY `package_id` (`package_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `park_orders`
 --
 
 INSERT INTO `park_orders` (`id`, `package_id`, `status`, `phone_number`, `date_ordered`) VALUES
-(1, 2, 'pending', '0787436754', '2021-01-31 16:58:17');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `admin`
---
-ALTER TABLE `admin`
-  ADD PRIMARY KEY (`username`);
-
---
--- Indexes for table `national_parks`
---
-ALTER TABLE `national_parks`
-  ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `packages`
---
-ALTER TABLE `packages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `national_park_id` (`national_park_id`);
-
---
--- Indexes for table `park_orders`
---
-ALTER TABLE `park_orders`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `package_id` (`package_id`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `national_parks`
---
-ALTER TABLE `national_parks`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- AUTO_INCREMENT for table `packages`
---
-ALTER TABLE `packages`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
-
---
--- AUTO_INCREMENT for table `park_orders`
---
-ALTER TABLE `park_orders`
-  MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `packages`
---
-ALTER TABLE `packages`
-  ADD CONSTRAINT `packages_ibfk_1` FOREIGN KEY (`national_park_id`) REFERENCES `national_parks` (`id`);
-
---
--- Constraints for table `park_orders`
---
-ALTER TABLE `park_orders`
-  ADD CONSTRAINT `park_orders_ibfk_1` FOREIGN KEY (`package_id`) REFERENCES `packages` (`id`);
+(1, 1, 'pending', '+256775445677', '2021-01-31 09:29:56'),
+(2, 1, 'pending', '+256773463487', '2021-01-31 13:34:09'),
+(4, 1, 'approved', '+256773463487', '2021-02-01 02:28:57');
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
