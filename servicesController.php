@@ -6,6 +6,7 @@ class Tourism
   public static $packageName;
   public static $packageCost;
   public static $packageId;
+  public static $packageDesc;
   public function __construct()
   {
   }
@@ -35,7 +36,7 @@ class Tourism
   public static function get_orders() {
     $services = array();
     $connection = DatabaseConnection::dbConnect();
-    $sql = "SELECT park_orders.id as order_id, status,phone_number,date_ordered,packages.name as package_name,price,national_parks.name as service_name FROM park_orders INNER JOIN packages ON  park_orders.package_id = packages.id  INNER JOIN national_parks ON  packages.national_park_id = national_parks.id ORDER BY park_orders.id DESC";
+    $sql = "SELECT park_orders.id as order_id, park_orders.status as `status`,phone_number,date_ordered,packages.name as package_name,price,national_parks.name as `service_name` FROM park_orders INNER JOIN packages ON park_orders.package_id = packages.id INNER JOIN national_parks ON packages.national_park_id = national_parks.id ORDER BY park_orders.id DESC";
     $result = mysqli_query($connection, $sql); 
    
     while($data = mysqli_fetch_assoc($result)){
@@ -53,10 +54,7 @@ class Tourism
 
     $data = mysqli_fetch_row($result);
   
-    return $data[0];
-
-     
-    
+    return $data[0]; 
   }
 
 
@@ -108,6 +106,17 @@ class Tourism
       return self::failure();
     }
   }
+  public static function decline_order() {
+    $connection = DatabaseConnection::dbConnect();
+    $order =  self::get('order');
+    $sql = "UPDATE park_orders SET `status` = 'declined' WHERE id = $order";
+    mysqli_query($connection, $sql);
+    if (mysqli_affected_rows($connection) > 0) {
+      return self::success("Order Declined successfully");
+    }else {
+      return self::failure();
+    }
+  }
   public static function undo_approval() {
     $connection = DatabaseConnection::dbConnect();
     $order =  self::post('order');
@@ -140,14 +149,17 @@ class Tourism
         self::$packageName = $data['name'];
         self::$packageCost = $data['price'];
         self::$packageId   = $data['id'];
+        self::$packageDesc = $data['description'];
       }
     }
   }
   public static function add_package() {
     $connection = DatabaseConnection::dbConnect();
-    $name = self::post('packageName');
-    $price = self::post('packagePrice');
-    $sql = "INSERT INTO packages (name, price) VALUES ('$name', '$price')";
+    $name = self::post('name');
+    $price = self::post('price');
+    $tourism_id = self::post('tourism_id');
+    $description = self::post('description');
+    $sql = "INSERT INTO packages (price, name, description, national_park_id) VALUES ('$price', '$name', '$description', '$tourism_id')";
     $checkpoint = "SELECT id FROM packages WHERE name = '$name'";
     $check = mysqli_query($connection, $checkpoint);
     if (mysqli_num_rows($check) > 0) {
@@ -176,7 +188,8 @@ class Tourism
     $id = self::post('id');
     $name = self::post('name');
     $price = self::post('price');
-    $sql = "UPDATE packages SET price = $price, name = '$name' WHERE id = $id";
+    $desc = self::post('desc');
+    $sql = "UPDATE packages SET price = $price, name = '$name', description = '$desc' WHERE id = $id";
     mysqli_query($connection, $sql);
     if (mysqli_affected_rows($connection) > 0) {
       echo self::success('Package Details Updated Succefully');
